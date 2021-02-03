@@ -1,0 +1,38 @@
+{
+  "name": "@ampproject/bento-compiler",
+  "version": "0.0.0",
+  "description": "Server-render amp components",
+  "author": "The AMP HTML Authors",
+  "license": "Apache-2.0",
+  "main": "src/index.ts",
+  "type": "module",
+  "files": [
+    "./dist/index.js"
+  ],
+  "scripts": {
+    "prettify": "npx prettier --write src test scripts",
+    "build": "node scripts/build.js",
+    "check-types": "tsc --noEmit --project tsconfig.json",
+    "pretest": "npm run build",
+    "test": "ava dist/test/**/test-*.js",
+    "ci-test": "npm run check-types && npm test",
+    "release": "np"
+  },
+  "devDependencies": {
+    "@types/parse5": "6.0.0",
+    "ava": "3.15.0",
+    "esbuild": "0.12.8",
+    "globby": "11.0.3",
+    "np": "7.5.0",
+    "parse5": "6.0.1",
+    "prettier": "2.3.1",
+    "typescript": "4.3.2"
+  },
+  "dependencies": {
+    "@ampproject/worker-dom": "0.29.3"
+  },
+  "np": {
+    "branch": "main",
+    "yarn": false
+  }
+}
