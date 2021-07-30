@@ -4,14 +4,14 @@
   "description": "Server-render amp components",
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "files": [
+    "./dist/index.js"
+  ],
   "type": "module",
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "./dist/index.js"
-  ],
   "scripts": {
     "prettify": "npx prettier --write src test scripts",
     "build": "node scripts/build.js",
