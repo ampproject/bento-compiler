@@ -4,11 +4,11 @@
   "version": "0.1.0",
   "description": "analysis tool for measuring the effect of ssr and removal of all JS.",
   "dependencies": {
-    "ansi-colors": "^4.1.1",
+    "ansi-colors": "4.1.1",
     "chai": "4.3.4",
     "chrome-launcher": "0.14.0",
-    "easy-table": "^1.1.1",
-    "express": "^4.17.1",
+    "easy-table": "1.1.1",
+    "express": "4.17.1",
     "lighthouse": "8.1.0",
     "mocha": "8.4.0"
   },
