@@ -11,6 +11,6 @@ based on commits since the last active tag.
 
 ### Release an Update:
 
-1. Ensure all tests are passing `npm run ci-test`. The release scripts will not proceed
+1. Ensure all tests are passing `npm test`. The release scripts will not proceed
    if any test fails.
 2. Execute in your terminal: `npm run release`.

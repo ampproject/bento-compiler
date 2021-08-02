@@ -16,9 +16,9 @@
     "prettify": "npx prettier --write src test scripts",
     "build": "node scripts/build.js",
     "check-types": "tsc --noEmit --project tsconfig.json",
-    "pretest": "npm run build",
-    "test": "ava dist/test/**/test-*.js",
-    "ci-test": "npm run check-types && npm test",
+    "test": "npm run check-types && npm run unit",
+    "preunit": "npm run build",
+    "unit": "ava dist/test/**/test-*.js",
     "release": "np"
   },
   "devDependencies": {
