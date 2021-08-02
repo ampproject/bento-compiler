@@ -5,12 +5,12 @@
   "description": "analysis tool for measuring the effect of ssr and removal of all JS.",
   "dependencies": {
     "ansi-colors": "^4.1.1",
-    "chai": "4.2.0",
-    "chrome-launcher": "^0.13.4",
+    "chai": "4.3.4",
+    "chrome-launcher": "0.14.0",
     "easy-table": "^1.1.1",
     "express": "^4.17.1",
-    "lighthouse": "^7.2.0",
-    "mocha": "8.2.1"
+    "lighthouse": "7.5.0",
+    "mocha": "8.4.0"
   },
   "scripts": {
     "gather": "node bin/gather.js",
