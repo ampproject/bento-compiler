@@ -9,7 +9,7 @@
     "chrome-launcher": "0.14.0",
     "easy-table": "1.1.1",
     "express": "4.17.1",
-    "lighthouse": "8.1.0",
+    "lighthouse": "8.3.0",
     "mocha": "8.4.0"
   },
   "scripts": {
