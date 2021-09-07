@@ -40,6 +40,31 @@ test('should handle empty ast in quirks mode', (t) => {
   t.is(printDoc(doc), '');
 });
 
+test('should handle tree under ZERO_LENGTH node', (t) => {
+  const ast: TreeProto = {
+    quirks_mode: true,
+    root: 0,
+    tree: [
+      {
+        tagid: getTagId('ZERO_LENGTH'),
+        value: undefined,
+        attributes: [],
+        children: [
+          {
+            value: 'html',
+            tagid: getTagId('html'),
+            attributes: [],
+            children: [],
+          },
+        ],
+      },
+    ],
+  };
+  const doc = fromTreeProto(ast);
+
+  t.is(printDoc(doc), '<html></html>');
+});
+
 test('should handle empty ast in strict mode', (t) => {
   const ast: TreeProto = {quirks_mode: false, tree: [], root: 0};
   const doc = fromTreeProto(ast);

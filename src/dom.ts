@@ -19,6 +19,7 @@ import {isElementNode, NodeProto, TreeProto} from './ast.js';
 // See: https://github.com/microsoft/TypeScript/issues/27957
 // @ts-ignore
 import {createDocument} from '@ampproject/worker-dom/dist/server-lib.mjs';
+import {getTagId} from './htmltagenum.js';
 
 /**
  * @file Provides helpers for converting between Document and TreeProto formats.
@@ -47,6 +48,12 @@ export function fromTreeProtoHelper(
     const node = nodes[i];
     if (!isElementNode(node)) {
       parent.appendChild(doc.createTextNode(node.value));
+      continue;
+    }
+
+    // ZERO_LENGTH nodes get flattened into the parent.
+    if (node.tagid === getTagId('ZERO_LENGTH')) {
+      fromTreeProtoHelper(node.children, doc, parent);
       continue;
     }
 
