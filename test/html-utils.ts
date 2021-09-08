@@ -16,19 +16,12 @@
 import * as parse5 from 'parse5';
 import {getNumTerms, isElementNode, NodeProto, TreeProto} from '../src/ast.js';
 import {getTagId} from '../src/htmltagenum.js';
-import {renderAst, InstructionMap, Result} from '../src/index.js';
+import {renderAst, InstructionMap} from '../src/index.js';
 
-export function renderHtml(
-  html: string,
-  instructions: InstructionMap
-): Result<string> {
+export function renderHtml(html: string, instructions: InstructionMap): string {
   const tree = parse(html);
-  const result = renderAst(tree, instructions);
-
-  if (result.type === 'failure') {
-    return result;
-  }
-  return {type: 'success', value: print(result.value)};
+  const renderedAst = renderAst(tree, instructions);
+  return print(renderedAst);
 }
 
 export function parse(html: string): TreeProto {

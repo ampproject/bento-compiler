@@ -21,19 +21,17 @@ export interface InstructionMap {
   [key: string]: (element: Element) => void;
 }
 
-/**
- * A collection of tagName to errors.
- */
-type ErrorMultimap = Map<string, string[]>;
-
-export type Result<T> =
-  | {type: 'success'; value: T}
-  | {type: 'failure'; error: ErrorMultimap};
+function defaultHandleError(tagName, e: Error) {
+  const errorMsg =
+    `[bento-compiler]: Error thrown while rendering <${tagName}>\n` + e.stack;
+  throw new Error(errorMsg);
+}
 
 export function renderAst(
   tree: TreeProto,
-  instructions: InstructionMap
-): Result<TreeProto> {
+  instructions: InstructionMap,
+  {handleError = defaultHandleError} = {}
+): TreeProto {
   const doc = dom.fromTreeProto(tree);
 
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
@@ -48,11 +46,7 @@ export function renderAst(
       try {
         buildDom(element);
       } catch (e) {
-        const errorMsg = e.message as string;
-        return {
-          type: 'failure',
-          error: new Map([[tagName, [errorMsg]]]),
-        };
+        handleError(tagName, e);
       }
     }
   }
@@ -61,7 +55,7 @@ export function renderAst(
   transformedAst.root = tree.root;
   transformedAst.quirks_mode = tree.quirks_mode;
 
-  return {type: 'success', value: transformedAst};
+  return transformedAst;
 }
 
 function isInTemplate(node: Node) {
