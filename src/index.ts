@@ -34,13 +34,11 @@ export function renderAst(
   tree: TreeProto,
   instructions: InstructionMap
 ): Result<TreeProto> {
-  const errors = new Map();
   const doc = dom.fromTreeProto(tree);
 
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
   for (let [tagName, buildDom] of Object.entries(instructions)) {
     const elements = doc.querySelectorAll(tagName);
-    const tagErrors = [];
     for (const element of elements) {
       // Do not render anything inside of templates.
       if (isInTemplate(element)) {
@@ -50,16 +48,13 @@ export function renderAst(
       try {
         buildDom(element);
       } catch (e) {
-        tagErrors.push(e.message);
+        const errorMsg = e.message as string;
+        return {
+          type: 'failure',
+          error: new Map([[tagName, [errorMsg]]]),
+        };
       }
     }
-    if (tagErrors.length) {
-      errors.set(tagName, tagErrors);
-    }
-  }
-
-  if (errors.size > 0) {
-    return {type: 'failure', error: errors};
   }
 
   const transformedAst = ast.fromDocument(doc);
