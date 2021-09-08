@@ -81,7 +81,7 @@ test('should render provided instruction', (t) => {
   t.deepEqual(renderAst(ast, instructions), expected);
 });
 
-test('should return the collection of found errors if a single instruction throws', (t) => {
+test('should return the error if a single instruction throws', (t) => {
   const instructions = {
     'amp-fail': (_el: Element) => {
       throw new Error('Cannot render <amp-fail>');
@@ -96,7 +96,7 @@ test('should return the collection of found errors if a single instruction throw
   t.deepEqual(renderAst(ast, instructions), expected);
 });
 
-test('should return the collection of found errors if an instruction throws', (t) => {
+test('should return only the first error even if multiple would throw', (t) => {
   const instructions = {
     'amp-success': (el: Element) => {
       el.setAttribute('rendered', '');
@@ -114,10 +114,7 @@ test('should return the collection of found errors if an instruction throws', (t
   );
   const expected: Result<string> = {
     type: 'failure',
-    error: new Map([
-      ['amp-fail1', ['Cannot render <amp-fail1>', 'Cannot render <amp-fail1>']],
-      ['amp-fail2', ['Cannot render <amp-fail2>']],
-    ]),
+    error: new Map([['amp-fail1', ['Cannot render <amp-fail1>']]]),
   };
   t.deepEqual(renderAst(ast, instructions), expected);
 });
