@@ -16,14 +16,7 @@
 import test from 'ava';
 import {NodeProto, TreeProto} from '../src/ast.js';
 import {getTagId} from '../src/htmltagenum.js';
-import {Result, renderAst} from '../src/index.js';
-
-/**
- * Helper for generating a successful Result.
- */
-function success(html: TreeProto): Result<TreeProto> {
-  return {type: 'success', value: html};
-}
+import {renderAst} from '../src/index.js';
 
 /**
  * Helper for generating NodeProtos.
@@ -61,8 +54,7 @@ function treeProto(
 
 test('should have no effect with empty instructions', (t) => {
   const ast = treeProto();
-  const expected = success(ast);
-  t.deepEqual(renderAst(ast, {}), expected);
+  t.deepEqual(renderAst(ast, {}), ast);
 });
 
 test('should render provided instruction', (t) => {
@@ -75,25 +67,21 @@ test('should render provided instruction', (t) => {
   };
 
   const ast = treeProto([h('amp-element')]);
-  const expected = success(
-    treeProto([h('amp-element', {rendered: ''}, ['answer: 42'])])
-  );
+  const expected = treeProto([
+    h('amp-element', {rendered: ''}, ['answer: 42']),
+  ]);
   t.deepEqual(renderAst(ast, instructions), expected);
 });
 
 test('should return the error if a single instruction throws', (t) => {
   const instructions = {
     'amp-fail': (_el: Element) => {
-      throw new Error('Cannot render <amp-fail>');
+      throw new Error('Something is undefined');
     },
   };
 
   const ast = treeProto(h('amp-fail'));
-  const expected: Result<string> = {
-    type: 'failure',
-    error: new Map([['amp-fail', ['Cannot render <amp-fail>']]]),
-  };
-  t.deepEqual(renderAst(ast, instructions), expected);
+  t.throws(() => renderAst(ast, instructions), {message: /amp-fail/});
 });
 
 test('should return only the first error even if multiple would throw', (t) => {
@@ -102,21 +90,40 @@ test('should return only the first error even if multiple would throw', (t) => {
       el.setAttribute('rendered', '');
     },
     'amp-fail1': (_el: Element) => {
-      throw new Error('Cannot render <amp-fail1>');
+      throw new Error('Something is undefined');
     },
     'amp-fail2': (_el: Element) => {
-      throw new Error('Cannot render <amp-fail2>');
+      throw new Error('Something is undefined');
     },
   };
 
   const ast = treeProto(
     h('amp-success', {}, [h('amp-fail1'), h('amp-fail1'), h('amp-fail2')])
   );
-  const expected: Result<string> = {
-    type: 'failure',
-    error: new Map([['amp-fail1', ['Cannot render <amp-fail1>']]]),
+  t.throws(() => renderAst(ast, instructions), {message: /amp-fail/});
+});
+
+test('should allow a custom error handler', (t) => {
+  const instructions = {
+    'amp-success': (el: Element) => {
+      el.setAttribute('rendered', '');
+    },
+    'amp-fail1': (_el: Element) => {
+      throw new Error('Something is undefined');
+    },
+    'amp-fail2': (_el: Element) => {
+      throw new Error('Something is undefined');
+    },
   };
-  t.deepEqual(renderAst(ast, instructions), expected);
+
+  const ast = treeProto(
+    h('amp-success', {}, [h('amp-fail1'), h('amp-fail1'), h('amp-fail2')])
+  );
+
+  const errors = [];
+  const handleError = (tagName) => errors.push(tagName);
+  renderAst(ast, instructions, {handleError});
+  t.deepEqual(errors, ['amp-fail1', 'amp-fail1', 'amp-fail2']);
 });
 
 test('should be unaffected by async modifications', async (t) => {
@@ -132,7 +139,7 @@ test('should be unaffected by async modifications', async (t) => {
   const rendered = renderAst(ast, instructions);
   await new Promise((r) => setTimeout(r)); // Waits a macrotask.
 
-  t.deepEqual(rendered, success(ast));
+  t.deepEqual(rendered, ast);
 });
 
 test('should not render elements within templates', (t) => {
@@ -145,15 +152,15 @@ test('should not render elements within templates', (t) => {
   const ast = treeProto(h('template', {}, [h('amp-element')]));
   const rendered = renderAst(ast, instructions);
 
-  t.deepEqual(rendered, success(ast));
+  t.deepEqual(rendered, ast);
 });
 
 test('should conserve quirks_mode and root', (t) => {
   let ast: TreeProto = {root: 42, quirks_mode: true, tree: []};
-  t.deepEqual(renderAst(ast, {})['value'], ast);
+  t.deepEqual(renderAst(ast, {}), ast);
 
   ast = {root: 7, quirks_mode: false, tree: []};
-  t.deepEqual(renderAst(ast, {})['value'], ast);
+  t.deepEqual(renderAst(ast, {}), ast);
 });
 
 test('should set tagids of element nodes', (t) => {
@@ -164,16 +171,13 @@ test('should set tagids of element nodes', (t) => {
   }
 
   const inputAst: TreeProto = treeProto(h('amp-list'));
-  let result = renderAst(inputAst, {'amp-list': buildAmpList});
-  if (result.type === 'failure') {
-    throw new Error(`Render should have succeeded`);
-  }
+  let renderedAst = renderAst(inputAst, {'amp-list': buildAmpList});
 
   t.deepEqual(
-    result.value,
+    renderedAst,
     treeProto([h('amp-list', {}, [h('b', {}, ['bolded text'])])])
   );
-  t.is(result.value.tree[0]?.['children']?.[0]?.tagid, 7);
+  t.is(renderedAst.tree[0]?.['children']?.[0]?.tagid, 7);
 });
 
 // TODO: ensure it is ok for our num_terms to be inaccurate.
@@ -188,15 +192,10 @@ test('should set num_terms of text nodes', (t) => {
   const inputAst: TreeProto = treeProto([h('amp-list')]);
   let result = renderAst(inputAst, {'amp-list': buildAmpList});
 
-  if (result.type === 'failure') {
-    t.fail('Render should succeed');
-    return;
-  }
-
   t.deepEqual(
-    result.value,
+    result,
     treeProto([h('amp-list', {}, ['element text', 'hello\ttabby\ttext'])])
   );
-  t.is(result.value.tree[0]?.['children']?.[0]?.num_terms, 2);
-  t.is(result.value.tree[0]?.['children']?.[1]?.num_terms, 3);
+  t.is(result.tree[0]?.['children']?.[0]?.num_terms, 2);
+  t.is(result.tree[0]?.['children']?.[1]?.num_terms, 3);
 });
