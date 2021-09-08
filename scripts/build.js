@@ -17,7 +17,7 @@
 import url from 'url';
 import path from 'path';
 import esbuild from 'esbuild';
-import globby from 'globby';
+import {globbySync} from 'globby';
 
 const root = path.join(url.fileURLToPath(import.meta.url), '..', '..');
 
@@ -31,7 +31,7 @@ const mainBinaryPromise = esbuild.buildSync({
 
 // Transpile everything to be able to run tests
 const transpilePromise = esbuild.build({
-  entryPoints: globby.sync([
+  entryPoints: globbySync([
     path.join(root, 'src/**/*.ts'),
     path.join(root, 'test/**/*.ts'),
   ]),
