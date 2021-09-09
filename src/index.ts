@@ -22,9 +22,7 @@ export interface InstructionMap {
 }
 
 function defaultHandleError(tagName, e: Error) {
-  const errorMsg =
-    `[bento-compiler]: Error thrown while rendering <${tagName}>\n` + e.stack;
-  throw new Error(errorMsg);
+  throw new Error(`[${tagName}]: ${e.stack}`);
 }
 
 export function renderAst(

@@ -84,7 +84,7 @@ test('should return the error if a single instruction throws', (t) => {
   t.throws(() => renderAst(ast, instructions), {message: /amp-fail/});
 });
 
-test('should return only the first error even if multiple would throw', (t) => {
+test('should only throw the first error even if multiple would throw', (t) => {
   const instructions = {
     'amp-success': (el: Element) => {
       el.setAttribute('rendered', '');
@@ -98,9 +98,9 @@ test('should return only the first error even if multiple would throw', (t) => {
   };
 
   const ast = treeProto(
-    h('amp-success', {}, [h('amp-fail1'), h('amp-fail1'), h('amp-fail2')])
+    h('amp-success', {}, [h('amp-fail1'), h('amp-fail2'), h('amp-fail2')])
   );
-  t.throws(() => renderAst(ast, instructions), {message: /amp-fail/});
+  t.throws(() => renderAst(ast, instructions), {message: /amp-fail1/});
 });
 
 test('should allow a custom error handler', (t) => {
