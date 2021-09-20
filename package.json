@@ -24,15 +24,15 @@
   "devDependencies": {
     "@types/parse5": "6.0.1",
     "ava": "3.15.0",
-    "esbuild": "0.12.25",
+    "esbuild": "0.12.28",
     "globby": "12.0.2",
     "np": "7.5.0",
     "parse5": "6.0.1",
-    "prettier": "2.3.2",
-    "typescript": "4.4.2"
+    "prettier": "2.4.1",
+    "typescript": "4.4.3"
   },
   "dependencies": {
-    "@ampproject/worker-dom": "0.30.1"
+    "@ampproject/worker-dom": "0.31.0"
   },
   "np": {
     "branch": "main",
