@@ -96,7 +96,7 @@ const mapping = {
   U: 89,
   UL: 90,
   VAR: 91,
-  // Empty tag
+  // Corresponds to #document
   ZERO_LENGTH: 92,
   // Used in repository/lexer/html_lexer.cc
   BANG_DASH_DASH: 93,

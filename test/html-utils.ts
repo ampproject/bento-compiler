@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 import * as parse5 from 'parse5';
-import {getNumTerms, isElementNode, NodeProto, TreeProto} from '../src/ast.js';
+import {
+  DocumentNodeProto,
+  getDocumentNode,
+  getNumTerms,
+  isElementNode,
+  NodeProto,
+  TreeProto,
+} from '../src/ast.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAst, InstructionMap} from '../src/index.js';
 
@@ -33,9 +40,10 @@ export function parse(html: string): TreeProto {
  */
 function fromParse5Document(doc: parse5.Document): TreeProto {
   const quirksMode = doc.mode === 'quirks';
-  const tree = (doc.childNodes ?? [])
+  const children = (doc.childNodes ?? [])
     .filter(isInParseTree)
     .map(mapParse5NodeToNodeProto);
+  const tree: [DocumentNodeProto] = [getDocumentNode(children)];
 
   return {quirks_mode: quirksMode, tree, root: 0};
 
@@ -74,7 +82,7 @@ function fromParse5Document(doc: parse5.Document): TreeProto {
 
 export function print(ast: TreeProto): string {
   const doctypePrefix = ast.quirks_mode ? '' : '<!DOCTYPE html>';
-  const printedTree = ast.tree.map(printNode).join('');
+  const printedTree = ast.tree[0].children.map(printNode).join('');
   return doctypePrefix + printedTree;
 }
 

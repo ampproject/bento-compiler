@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import test from 'ava';
-import {NodeProto, TreeProto} from '../src/ast.js';
+import {getDocumentNode, NodeProto, TreeProto} from '../src/ast.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAst} from '../src/index.js';
 
@@ -48,8 +48,8 @@ function h(
 function treeProto(
   tree: NodeProto[] | NodeProto = [],
   {quirks_mode, root} = {quirks_mode: false, root: 0}
-) {
-  return {tree: [].concat(tree), quirks_mode, root};
+): TreeProto {
+  return {tree: [getDocumentNode([].concat(tree))], quirks_mode, root};
 }
 
 test('should have no effect with empty instructions', (t) => {
@@ -156,10 +156,10 @@ test('should not render elements within templates', (t) => {
 });
 
 test('should conserve quirks_mode and root', (t) => {
-  let ast: TreeProto = {root: 42, quirks_mode: true, tree: []};
+  let ast: TreeProto = {root: 42, quirks_mode: true, tree: [getDocumentNode()]};
   t.deepEqual(renderAst(ast, {}), ast);
 
-  ast = {root: 7, quirks_mode: false, tree: []};
+  ast = {root: 7, quirks_mode: false, tree: [getDocumentNode()]};
   t.deepEqual(renderAst(ast, {}), ast);
 });
 
@@ -177,7 +177,7 @@ test('should set tagids of element nodes', (t) => {
     renderedAst,
     treeProto([h('amp-list', {}, [h('b', {}, ['bolded text'])])])
   );
-  t.is(renderedAst.tree[0]?.['children']?.[0]?.tagid, 7);
+  t.is(renderedAst.tree[0].children[0]['children']?.[0]?.tagid, getTagId('b'));
 });
 
 // TODO: ensure it is ok for our num_terms to be inaccurate.
@@ -196,6 +196,6 @@ test('should set num_terms of text nodes', (t) => {
     result,
     treeProto([h('amp-list', {}, ['element text', 'hello\ttabby\ttext'])])
   );
-  t.is(result.tree[0]?.['children']?.[0]?.num_terms, 2);
-  t.is(result.tree[0]?.['children']?.[1]?.num_terms, 3);
+  t.is(result.tree[0].children[0]?.['children']?.[0]?.num_terms, 2);
+  t.is(result.tree[0].children[0]?.['children']?.[1]?.num_terms, 3);
 });

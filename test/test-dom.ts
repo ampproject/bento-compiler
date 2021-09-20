@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type {TreeProto} from '../src/ast.js';
+import {getDocumentNode, NodeProto, TreeProto} from '../src/ast.js';
 
 import test from 'ava';
 import {fromTreeProto} from '../src/dom.js';
@@ -34,39 +34,40 @@ function htmlWithBody(html: string) {
 }
 
 test('should handle empty ast in quirks mode', (t) => {
-  const ast: TreeProto = {quirks_mode: true, tree: [], root: 0};
+  const ast: TreeProto = {
+    quirks_mode: true,
+    tree: [getDocumentNode()],
+    root: 0,
+  };
   const doc = fromTreeProto(ast);
 
   t.is(printDoc(doc), '');
 });
 
-test('should handle tree under ZERO_LENGTH node', (t) => {
+test('should throw if ZERO_LENGTH is found anywhere but the root', (t) => {
   const ast: TreeProto = {
     quirks_mode: true,
     root: 0,
     tree: [
-      {
-        tagid: getTagId('ZERO_LENGTH'),
-        value: undefined,
-        attributes: [],
-        children: [
-          {
-            value: 'html',
-            tagid: getTagId('html'),
-            attributes: [],
-            children: [],
-          },
-        ],
-      },
+      getDocumentNode([
+        {
+          value: 'html',
+          tagid: getTagId('html'),
+          attributes: [],
+          children: [getDocumentNode() as NodeProto],
+        },
+      ]),
     ],
   };
-  const doc = fromTreeProto(ast);
-
-  t.is(printDoc(doc), '<html></html>');
+  t.throws(() => fromTreeProto(ast), {message: /Found a #document/});
 });
 
 test('should handle empty ast in strict mode', (t) => {
-  const ast: TreeProto = {quirks_mode: false, tree: [], root: 0};
+  const ast: TreeProto = {
+    quirks_mode: false,
+    tree: [getDocumentNode()],
+    root: 0,
+  };
   const doc = fromTreeProto(ast);
 
   t.is(printDoc(doc), '<!DOCTYPE html>');
@@ -77,17 +78,28 @@ test('should handle single node', (t) => {
     root: 0,
     quirks_mode: true,
     tree: [
-      {
-        value: 'div',
-        tagid: getTagId('div'),
-        attributes: [],
-        children: [],
-      },
+      getDocumentNode([
+        {
+          value: 'div',
+          tagid: getTagId('div'),
+          attributes: [],
+          children: [],
+        },
+      ]),
     ],
   };
   const doc = fromTreeProto(ast);
 
   t.is(printDoc(doc), '<div></div>');
+});
+
+test('should throw if tree does not begin with #document', (t) => {
+  const ast: TreeProto = {
+    root: 0,
+    quirks_mode: true,
+    tree: [{value: 'div', tagid: getTagId('div')} as any],
+  };
+  t.throws(() => fromTreeProto(ast), {message: /HTML must begin with a/});
 });
 
 test('should handle nested nodes', (t) => {

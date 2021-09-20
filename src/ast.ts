@@ -20,7 +20,7 @@ import {getTagId} from './htmltagenum.js';
  */
 
 export interface TreeProto {
-  tree: Array<NodeProto>;
+  tree: [DocumentNodeProto];
   quirks_mode: undefined | boolean;
   root: number;
 }
@@ -36,6 +36,11 @@ export interface ElementNodeProto {
   children: Array<NodeProto>;
 }
 
+export interface DocumentNodeProto {
+  tagid: 92; // See htmltagenum.ts
+  children: Array<NodeProto>;
+}
+
 export type NodeProto = TextNodeProto | ElementNodeProto;
 export interface AttributeProto {
   name: string;
@@ -47,9 +52,10 @@ export function isElementNode(node: NodeProto): node is ElementNodeProto {
 }
 
 export function fromDocument(doc: Document): TreeProto {
+  const children = Array.from(doc.childNodes).map(mapDomNodeToNodeProto);
   return {
     quirks_mode: doc.compatMode === 'BackCompat',
-    tree: Array.from(doc.childNodes).map(mapDomNodeToNodeProto),
+    tree: [getDocumentNode(children)],
     root: 0,
   };
 }
@@ -84,4 +90,8 @@ function mapDomNodeToNodeProto(node: Node): NodeProto {
 const termRegex = /[\w-]+/gm;
 export function getNumTerms(str: string): number {
   return str.match(termRegex)?.length ?? 0;
+}
+
+export function getDocumentNode(children = []): DocumentNodeProto {
+  return {tagid: 92, children};
 }
