@@ -35,7 +35,14 @@ export function fromTreeProto(ast: TreeProto) {
     },
   });
 
-  fromTreeProtoHelper(ast.tree, doc, doc);
+  if (ast.tree[0]?.tagid !== getTagId('ZERO_LENGTH')) {
+    const firstNode = ast.tree?.[0]?.tagid;
+    throw new Error(
+      `HTML must begin with a #document tag, found: ${firstNode}`
+    );
+  }
+
+  fromTreeProtoHelper(ast.tree[0].children, doc, doc);
   return doc;
 }
 
@@ -51,10 +58,8 @@ export function fromTreeProtoHelper(
       continue;
     }
 
-    // ZERO_LENGTH nodes get flattened into the parent.
     if (node.tagid === getTagId('ZERO_LENGTH')) {
-      fromTreeProtoHelper(node.children, doc, parent);
-      continue;
+      throw new Error(`Found a #document in a non-root position`);
     }
 
     const domNode = doc.createElement(node.value);
