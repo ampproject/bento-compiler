@@ -48,7 +48,7 @@ export interface AttributeProto {
 }
 
 export function isElementNode(node: NodeProto): node is ElementNodeProto {
-  return 'tagid' in node;
+  return (node as any).tagid !== undefined;
 }
 
 export function fromDocument(doc: Document): TreeProto {
