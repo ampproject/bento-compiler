@@ -1,41 +1,34 @@
 import {renderAst} from '../dist/src/index.js';
 import {parse} from '../dist/test/html-utils.js';
+import Benchmark from 'benchmark';
 
-const sum = (numList) => numList.reduce((a, b) => a + b, 0);
-const mean = (numList) => sum(numList) / numList.length;
-
-function getHtmlNodes(n) {
-  let nodes = '';
-  for (let i = 0; i < n; i++) {
-    nodes += `<bento-node></bento-node>`;
-  }
-  return nodes;
+// Returns an HTML document with N body nodes.
+function getDoc(n) {
+  const nodes = new Array(n).fill('<bento-node></bento-node>').join('');
+  return parse(`<html><head></head><body>${nodes}</body></html>`);
 }
 
-function measureRender(name, doc) {
-  const fakeBuildDom = (el) => el.setAttribute('rendered');
-  // First do baseline iteration measure
-  let measures = [];
-  for (let i = 0; i < 100; i++) {
-    let startTime = Date.now();
-    renderAst(doc, {});
-    measures.push(Date.now() - startTime);
-  }
-  console.log(`${name} noop avg: ${mean(measures)}`);
+const doc1 = getDoc(1);
+const doc10 = getDoc(10);
+const doc100 = getDoc(100);
+const doc1000 = getDoc(1000);
 
-  // Then do a worst-case scenario every node must be measured
-  measures = [];
-  for (let i = 0; i < 1000; i++) {
-    let startTime = Date.now();
-    renderAst(doc, {'bento-component': fakeBuildDom});
-    measures.push(Date.now() - startTime);
-  }
-  console.log(`${name} render avg: ${mean(measures)}ms`);
-}
-
-for (let i = 1; i <= 10000; i *= 10) {
-  const doc = parse(
-    `<html><head></head><body>${getHtmlNodes(i)}</body></html>`
-  );
-  measureRender(`Document: ${i} nodes`, doc);
-}
+var suite = new Benchmark.Suite();
+suite
+  .add('Document: 1 node', function () {
+    renderAst(doc1, {});
+  })
+  .add('Document: 10 nodes', function () {
+    renderAst(doc10, {});
+  })
+  .add('Document: 100 nodes', function () {
+    renderAst(doc100, {});
+  })
+  .add('Document: 1000 nodes', function () {
+    renderAst(doc1000, {});
+  })
+  .on('complete', function () {
+    const results = Array.from(this);
+    console.log(results.map((r) => r.toString()).join('\n'));
+  })
+  .run();
