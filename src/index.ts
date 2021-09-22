@@ -30,9 +30,7 @@ export function renderAst(
   instructions: InstructionMap,
   {handleError = defaultHandleError} = {}
 ): TreeProto {
-  let start = Date.now();
   const doc = dom.fromTreeProto(tree);
-  console.log(`Done creating worker-dom: ${Date.now() - start}ms`);
 
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
   for (let [tagName, buildDom] of Object.entries(instructions)) {
@@ -51,9 +49,7 @@ export function renderAst(
     }
   }
 
-  start = Date.now();
   const transformedAst = ast.fromDocument(doc);
-  console.log(`Done creating AST: ${Date.now() - start}ms`);
   transformedAst.root = tree.root;
   transformedAst.quirks_mode = tree.quirks_mode;
 

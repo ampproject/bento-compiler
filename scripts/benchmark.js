@@ -12,6 +12,7 @@ const doc1 = getDoc(1);
 const doc10 = getDoc(10);
 const doc100 = getDoc(100);
 const doc1000 = getDoc(1000);
+const doc10000 = getDoc(10000);
 
 var suite = new Benchmark.Suite();
 suite
@@ -27,6 +28,10 @@ suite
   .add('Document: 1000 nodes', function () {
     renderAst(doc1000, {});
   })
+  // TODO: uncomment when this doesn't crash.
+  // .add('Document: 10000 nodes', function () {
+  //   renderAst(doc10000, {});
+  // })
   .on('complete', function () {
     const results = Array.from(this);
     console.log(results.map((r) => r.toString()).join('\n'));
