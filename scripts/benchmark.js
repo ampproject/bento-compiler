@@ -34,6 +34,6 @@ suite
   // })
   .on('complete', function () {
     const results = Array.from(this);
-    console.log(results.map((r) => r.toString()).join('\n'));
+    console.log(results.join('\n'));
   })
   .run();
