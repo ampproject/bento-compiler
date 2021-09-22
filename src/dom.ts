@@ -35,10 +35,10 @@ export function fromTreeProto(ast: TreeProto) {
     },
   });
 
-  if (ast.tree[0]?.tagid !== getTagId('ZERO_LENGTH')) {
-    const firstNode = ast.tree?.[0]?.tagid;
+  const firstNodeTagId = ast.tree?.[0]?.tagid;
+  if (firstNodeTagId !== getTagId('ZERO_LENGTH')) {
     throw new Error(
-      `HTML must begin with a #document tag, found: ${firstNode}`
+      `HTML must begin with a #document tag, found: ${firstNodeTagId}`
     );
   }
 

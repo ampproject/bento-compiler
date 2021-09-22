@@ -55,7 +55,7 @@ export function fromDocument(doc: Document): TreeProto {
   const children = Array.from(doc.childNodes).map(mapDomNodeToNodeProto);
   return {
     quirks_mode: doc.compatMode === 'BackCompat',
-    tree: [getDocumentNode(children)],
+    tree: [{tagid: 92, children}],
     root: 0,
   };
 }
@@ -90,8 +90,4 @@ function mapDomNodeToNodeProto(node: Node): NodeProto {
 const termRegex = /[\w-]+/gm;
 export function getNumTerms(str: string): number {
   return str.match(termRegex)?.length ?? 0;
-}
-
-export function getDocumentNode(children = []): DocumentNodeProto {
-  return {tagid: 92, children};
 }

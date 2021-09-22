@@ -16,7 +16,6 @@
 import * as parse5 from 'parse5';
 import {
   DocumentNodeProto,
-  getDocumentNode,
   getNumTerms,
   isElementNode,
   NodeProto,
@@ -43,7 +42,7 @@ function fromParse5Document(doc: parse5.Document): TreeProto {
   const children = (doc.childNodes ?? [])
     .filter(isInParseTree)
     .map(mapParse5NodeToNodeProto);
-  const tree: [DocumentNodeProto] = [getDocumentNode(children)];
+  const tree: [DocumentNodeProto] = [{tagid: 92, children}];
 
   return {quirks_mode: quirksMode, tree, root: 0};
 
