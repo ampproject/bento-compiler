@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {getDocumentNode, NodeProto, TreeProto} from '../src/ast.js';
+import {DocumentNodeProto, NodeProto, TreeProto} from '../src/ast.js';
 
 import test from 'ava';
 import {fromTreeProto} from '../src/dom.js';
@@ -31,6 +31,10 @@ function parseDoc(html: string): Document {
 
 function htmlWithBody(html: string) {
   return `<html><head></head><body>${html}</body></html>`;
+}
+
+function getDocumentNode(children = []): DocumentNodeProto {
+  return {tagid: 92, children};
 }
 
 test('should handle empty ast in quirks mode', (t) => {

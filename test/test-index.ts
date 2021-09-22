@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import test from 'ava';
-import {getDocumentNode, NodeProto, TreeProto} from '../src/ast.js';
+import {DocumentNodeProto, NodeProto, TreeProto} from '../src/ast.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAst} from '../src/index.js';
 
@@ -49,7 +49,7 @@ function treeProto(
   tree: NodeProto[] | NodeProto = [],
   {quirks_mode, root} = {quirks_mode: false, root: 0}
 ): TreeProto {
-  return {tree: [getDocumentNode([].concat(tree))], quirks_mode, root};
+  return {tree: [{tagid: 92, children: [].concat(tree)}], quirks_mode, root};
 }
 
 test('should have no effect with empty instructions', (t) => {
@@ -156,10 +156,11 @@ test('should not render elements within templates', (t) => {
 });
 
 test('should conserve quirks_mode and root', (t) => {
-  let ast: TreeProto = {root: 42, quirks_mode: true, tree: [getDocumentNode()]};
+  const tree: [DocumentNodeProto] = [{tagid: 92, children: []}];
+  let ast: TreeProto = {root: 42, quirks_mode: true, tree};
   t.deepEqual(renderAst(ast, {}), ast);
 
-  ast = {root: 7, quirks_mode: false, tree: [getDocumentNode()]};
+  ast = {root: 7, quirks_mode: false, tree};
   t.deepEqual(renderAst(ast, {}), ast);
 });
 
