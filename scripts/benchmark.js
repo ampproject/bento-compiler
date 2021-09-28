@@ -28,10 +28,9 @@ suite
   .add('Document: 1000 nodes', function () {
     renderAst(doc1000, {});
   })
-  // TODO: uncomment when this doesn't crash.
-  // .add('Document: 10000 nodes', function () {
-  //   renderAst(doc10000, {});
-  // })
+  .add('Document: 10000 nodes', function () {
+    renderAst(doc10000, {});
+  })
   .on('complete', function () {
     const results = Array.from(this);
     console.log(results.join('\n'));
