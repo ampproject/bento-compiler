@@ -5,8 +5,10 @@
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
   "main": "dist/index.js",
+  "types": "dist/types.d.ts",
   "files": [
-    "./dist/index.js"
+    "./dist/index.js",
+    "./dist/index.d.ts"
   ],
   "type": "module",
   "publishConfig": {
@@ -17,7 +19,7 @@
     "prebench": "npm run build",
     "bench": "node scripts/benchmark.js",
     "build": "node scripts/build.js",
-    "check-types": "tsc --noEmit --project tsconfig.json",
+    "check-types": "tsc --project tsconfig.json",
     "test": "npm run check-types && npm run unit",
     "preunit": "npm run build",
     "unit": "ava dist/test/**/test-*.js",
