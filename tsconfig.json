@@ -1,6 +1,7 @@
 {
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "noEmit": true
   }
 }

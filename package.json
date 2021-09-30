@@ -7,8 +7,7 @@
   "main": "dist/index.js",
   "types": "dist/types.d.ts",
   "files": [
-    "./dist/index.js",
-    "./dist/index.d.ts"
+    "./dist"
   ],
   "type": "module",
   "publishConfig": {
