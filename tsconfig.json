@@ -1,9 +1,6 @@
 {
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"],
-    "declaration": true,
-    "outFile": "dist/types",
-    "emitDeclarationOnly": true
+    "lib": ["ESNext", "DOM"]
   }
 }
