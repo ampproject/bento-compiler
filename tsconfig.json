@@ -1,6 +1,6 @@
 {
   "include": ["src/**/*.ts", "test/**/*.ts"],
   "compilerOptions": {
-    "lib": ["ESNext", "DOM"]
+    "lib": ["esnext", "dom"]
   }
 }
