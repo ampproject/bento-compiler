@@ -20,7 +20,7 @@
     "bench": "node scripts/benchmark.js",
     "build": "node scripts/build.js",
     "check-types": "tsc --project tsconfig.json",
-    "gen-types": "tsc --project tsconfig-types.json",
+    "gen-types": "tsc --project tsconfig-gentypes.json",
     "test": "npm run check-types && npm run unit",
     "preunit": "npm run build",
     "unit": "ava dist/test/**/test-*.js",
