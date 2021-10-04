@@ -13,9 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type {TreeProto} from './ast.js';
 import * as ast from './ast.js';
 import * as dom from './dom.js';
+
+// Reexport all types from ast
+export type {
+  TreeProto,
+  DocumentNodeProto,
+  NodeProto,
+  ElementNodeProto,
+  TextNodeProto,
+  AttributeProto,
+} from './ast.js';
 
 export interface InstructionMap {
   [key: string]: (element: Element) => void;
@@ -26,10 +35,10 @@ function defaultHandleError(tagName, e: Error) {
 }
 
 export function renderAst(
-  tree: TreeProto,
+  tree: ast.TreeProto,
   instructions: InstructionMap,
   {handleError = defaultHandleError} = {}
-): TreeProto {
+): ast.TreeProto {
   const doc = dom.fromTreeProto(tree);
 
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
