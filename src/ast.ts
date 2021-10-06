@@ -14,38 +14,7 @@
  * limitations under the License.
  */
 import {getTagId} from './htmltagenum.js';
-
-/**
- * @file Provides interfaces and helper functions for handling a JSON representation of HTML.
- */
-
-export interface TreeProto {
-  tree: [DocumentNodeProto];
-  quirks_mode: undefined | boolean;
-  root: number;
-}
-
-export interface TextNodeProto {
-  value: string;
-  num_terms: number;
-}
-export interface ElementNodeProto {
-  tagid: number;
-  value: string;
-  attributes: Array<AttributeProto>;
-  children: Array<NodeProto>;
-}
-
-export interface DocumentNodeProto {
-  tagid: 92; // See htmltagenum.ts
-  children: Array<NodeProto>;
-}
-
-export type NodeProto = TextNodeProto | ElementNodeProto;
-export interface AttributeProto {
-  name: string;
-  value?: string;
-}
+import {NodeProto, ElementNodeProto, TreeProto} from './protos.js';
 
 export function isElementNode(node: NodeProto): node is ElementNodeProto {
   return (node as any).tagid !== undefined;

@@ -15,17 +15,9 @@
  */
 import * as ast from './ast.js';
 import * as dom from './dom.js';
+import {TreeProto} from './protos.js';
 
-// Reexport all types from ast
-export type {
-  TreeProto,
-  DocumentNodeProto,
-  NodeProto,
-  ElementNodeProto,
-  TextNodeProto,
-  AttributeProto,
-} from './ast.js';
-
+export * as protos from './protos.js';
 export interface InstructionMap {
   [key: string]: (element: Element) => void;
 }
@@ -35,10 +27,10 @@ function defaultHandleError(tagName, e: Error) {
 }
 
 export function renderAst(
-  tree: ast.TreeProto,
+  tree: TreeProto,
   instructions: InstructionMap,
   {handleError = defaultHandleError} = {}
-): ast.TreeProto {
+): TreeProto {
   const doc = dom.fromTreeProto(tree);
 
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
