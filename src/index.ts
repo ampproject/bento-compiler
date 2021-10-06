@@ -17,7 +17,8 @@ import * as ast from './ast.js';
 import * as dom from './dom.js';
 import {TreeProto} from './protos.js';
 
-export * as protos from './protos.js';
+export * from './protos.js';
+
 export interface InstructionMap {
   [key: string]: (element: Element) => void;
 }
