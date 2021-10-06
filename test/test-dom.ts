@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {DocumentNodeProto, NodeProto, TreeProto} from '../src/ast.js';
+import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 
 import test from 'ava';
 import {fromTreeProto} from '../src/dom.js';

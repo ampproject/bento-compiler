@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {isElementNode, NodeProto, TreeProto} from './ast.js';
+import {isElementNode} from './ast.js';
+import {TreeProto, NodeProto} from './protos.js';
 
 // TypeScript doesn't understand importing a file with a .mjs extension, but it is perfectly valid once transpiled
 // See: https://github.com/microsoft/TypeScript/issues/27957

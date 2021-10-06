@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 import * as parse5 from 'parse5';
-import {
-  DocumentNodeProto,
-  getNumTerms,
-  isElementNode,
-  NodeProto,
-  TreeProto,
-} from '../src/ast.js';
+import {getNumTerms, isElementNode} from '../src/ast.js';
+import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAst, InstructionMap} from '../src/index.js';
 

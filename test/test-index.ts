@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import test from 'ava';
-import {DocumentNodeProto, NodeProto, TreeProto} from '../src/ast.js';
+import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAst} from '../src/index.js';
 
