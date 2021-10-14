@@ -21,7 +21,7 @@ export function isElementNode(node: NodeProto): node is ElementNodeProto {
 }
 
 export function fromDocument(doc: Document): TreeProto {
-  const children = Array.from(doc.childNodes).map(mapDomNodeToNodeProto);
+  const children = Array.from(doc.childNodes).map(fromNode);
   return {
     quirks_mode: doc.compatMode === 'BackCompat',
     tree: [{tagid: 92, children}],
@@ -34,7 +34,7 @@ enum NodeType {
   Text = 3,
 }
 
-function mapDomNodeToNodeProto(node: Node): NodeProto {
+export function fromNode(node: Node): NodeProto {
   if (node.nodeType !== NodeType.Element && node.nodeType !== NodeType.Text) {
     throw new Error(`Unsupported nodeType: ${node.nodeType}`);
   }
@@ -52,7 +52,7 @@ function mapDomNodeToNodeProto(node: Node): NodeProto {
     tagid: getTagId(elementNode.tagName),
     value: elementNode.tagName.toLowerCase(),
     attributes,
-    children: Array.from(node.childNodes).map(mapDomNodeToNodeProto),
+    children: Array.from(node.childNodes).map(fromNode),
   };
 }
 

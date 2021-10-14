@@ -17,11 +17,11 @@ import * as parse5 from 'parse5';
 import {getNumTerms, isElementNode} from '../src/ast.js';
 import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
-import {renderAst, InstructionMap} from '../src/index.js';
+import {renderAstDocument, InstructionMap} from '../src/index.js';
 
 export function renderHtml(html: string, instructions: InstructionMap): string {
   const tree = parse(html);
-  const renderedAst = renderAst(tree, instructions);
+  const renderedAst = renderAstDocument(tree, instructions);
   return print(renderedAst);
 }
 

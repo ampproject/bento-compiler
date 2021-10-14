@@ -47,11 +47,14 @@ export function fromTreeProto(ast: TreeProto) {
   return doc;
 }
 
-export function fromTreeProtoHelper(
-  nodes: NodeProto[],
-  doc: Document,
-  parent: Node
-) {
+// TODO: research optimization opportunity to reuse the same doc.
+export function fromNodeProto(node: NodeProto): Element {
+  const doc: Document = createDocument();
+  fromTreeProtoHelper([node], doc, doc);
+  return doc.children[0];
+}
+
+function fromTreeProtoHelper(nodes: NodeProto[], doc: Document, parent: Node) {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     if (!isElementNode(node)) {
