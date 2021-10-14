@@ -16,7 +16,7 @@
 import test from 'ava';
 import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
-import {renderAst} from '../src/index.js';
+import {renderAstDocument} from '../src/index.js';
 
 /**
  * Helper for generating NodeProtos.
@@ -54,7 +54,7 @@ function treeProto(
 
 test('should have no effect with empty instructions', (t) => {
   const ast = treeProto();
-  t.deepEqual(renderAst(ast, {}), ast);
+  t.deepEqual(renderAstDocument(ast, {}), ast);
 });
 
 test('should render provided instruction', (t) => {
@@ -70,7 +70,7 @@ test('should render provided instruction', (t) => {
   const expected = treeProto([
     h('amp-element', {rendered: ''}, ['answer: 42']),
   ]);
-  t.deepEqual(renderAst(ast, instructions), expected);
+  t.deepEqual(renderAstDocument(ast, instructions), expected);
 });
 
 test('should return the error if a single instruction throws', (t) => {
@@ -81,7 +81,7 @@ test('should return the error if a single instruction throws', (t) => {
   };
 
   const ast = treeProto(h('amp-fail'));
-  t.throws(() => renderAst(ast, instructions), {message: /amp-fail/});
+  t.throws(() => renderAstDocument(ast, instructions), {message: /amp-fail/});
 });
 
 test('should only throw the first error even if multiple would throw', (t) => {
@@ -100,7 +100,7 @@ test('should only throw the first error even if multiple would throw', (t) => {
   const ast = treeProto(
     h('amp-success', {}, [h('amp-fail1'), h('amp-fail2'), h('amp-fail2')])
   );
-  t.throws(() => renderAst(ast, instructions), {message: /amp-fail1/});
+  t.throws(() => renderAstDocument(ast, instructions), {message: /amp-fail1/});
 });
 
 test('should allow a custom error handler', (t) => {
@@ -122,7 +122,7 @@ test('should allow a custom error handler', (t) => {
 
   const errors = [];
   const handleError = (tagName) => errors.push(tagName);
-  renderAst(ast, instructions, {handleError});
+  renderAstDocument(ast, instructions, {handleError});
   t.deepEqual(errors, ['amp-fail1', 'amp-fail1', 'amp-fail2']);
 });
 
@@ -136,7 +136,7 @@ test('should be unaffected by async modifications', async (t) => {
   };
 
   const ast = treeProto([h('amp-element')]);
-  const rendered = renderAst(ast, instructions);
+  const rendered = renderAstDocument(ast, instructions);
   await new Promise((r) => setTimeout(r)); // Waits a macrotask.
 
   t.deepEqual(rendered, ast);
@@ -150,7 +150,7 @@ test('should not render elements within templates', (t) => {
   };
 
   const ast = treeProto(h('template', {}, [h('amp-element')]));
-  const rendered = renderAst(ast, instructions);
+  const rendered = renderAstDocument(ast, instructions);
 
   t.deepEqual(rendered, ast);
 });
@@ -158,10 +158,10 @@ test('should not render elements within templates', (t) => {
 test('should conserve quirks_mode and root', (t) => {
   const tree: [DocumentNodeProto] = [{tagid: 92, children: []}];
   let ast: TreeProto = {root: 42, quirks_mode: true, tree};
-  t.deepEqual(renderAst(ast, {}), ast);
+  t.deepEqual(renderAstDocument(ast, {}), ast);
 
   ast = {root: 7, quirks_mode: false, tree};
-  t.deepEqual(renderAst(ast, {}), ast);
+  t.deepEqual(renderAstDocument(ast, {}), ast);
 });
 
 test('should set tagids of element nodes', (t) => {
@@ -172,7 +172,7 @@ test('should set tagids of element nodes', (t) => {
   }
 
   const inputAst: TreeProto = treeProto(h('amp-list'));
-  let renderedAst = renderAst(inputAst, {'amp-list': buildAmpList});
+  let renderedAst = renderAstDocument(inputAst, {'amp-list': buildAmpList});
 
   t.deepEqual(
     renderedAst,
@@ -191,7 +191,7 @@ test('should set num_terms of text nodes', (t) => {
   }
 
   const inputAst: TreeProto = treeProto([h('amp-list')]);
-  let result = renderAst(inputAst, {'amp-list': buildAmpList});
+  let result = renderAstDocument(inputAst, {'amp-list': buildAmpList});
 
   t.deepEqual(
     result,
