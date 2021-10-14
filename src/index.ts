@@ -34,12 +34,15 @@ export function renderAstDocument(
 ): TreeProto {
   const doc = dom.fromTreeProto(tree);
   renderNodeDeep(doc, instructions, {handleError});
-  const transformedAst = ast.fromDocument(doc);
-
-  transformedAst.root = tree.root;
-  transformedAst.quirks_mode = tree.quirks_mode;
-  return transformedAst;
+  return {
+    ...ast.fromDocument(doc),
+    // these two don't have clear equivalents in worker-dom,
+    // so we retain them here.
+    root: tree.root,
+    quirks_mode: tree.quirks_mode,
+  };
 }
+
 export function renderAstNodes(
   nodes: NodeProto[],
   instructions: InstructionMap,
@@ -57,6 +60,13 @@ function renderNodeDeep(
   instructions: InstructionMap,
   {handleError = defaultHandleError} = {}
 ): void {
+  // First render given node if applicable
+  if (node.tagName.toLowerCase() in instructions) {
+    const buildDom = instructions[node.tagName.toLowerCase()];
+    buildDom(node);
+  }
+
+  // Then deeply render all children.
   // TODO: Optimization opportunity by writing a custom walk instead of N querySelectorAll.
   for (let [tagName, buildDom] of Object.entries(instructions)) {
     const elements = Array.from(node.querySelectorAll(tagName));

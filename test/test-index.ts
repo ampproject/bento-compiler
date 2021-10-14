@@ -16,7 +16,7 @@
 import test from 'ava';
 import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
-import {renderAstDocument} from '../src/index.js';
+import {renderAstDocument, renderAstNodes} from '../src/index.js';
 
 /**
  * Helper for generating NodeProtos.
@@ -199,4 +199,27 @@ test('should set num_terms of text nodes', (t) => {
   );
   t.is(result.tree[0].children[0]?.['children']?.[0]?.num_terms, 2);
   t.is(result.tree[0].children[0]?.['children']?.[1]?.num_terms, 3);
+});
+
+test('should render node partials', (t) => {
+  function buildAmpList(element) {
+    const doc = element.ownerDocument;
+    element.appendChild(doc.createTextNode('element text'));
+  }
+
+  const inputAst: NodeProto = h('amp-list');
+  let result = renderAstNodes([inputAst], {'amp-list': buildAmpList});
+  t.deepEqual(result, [h('amp-list', {}, ['element text'])]);
+});
+
+test('should deeply render node partials', (t) => {
+  function buildAmpEl(element: Element) {
+    element.setAttribute('rendered', '');
+  }
+
+  const inputAst: NodeProto = h('amp-el', {}, [h('amp-el')]);
+  let result = renderAstNodes([inputAst], {'amp-el': buildAmpEl});
+  t.deepEqual(result, [
+    h('amp-el', {rendered: ''}, [h('amp-el', {rendered: ''})]),
+  ]);
 });
