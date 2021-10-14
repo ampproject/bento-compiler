@@ -97,9 +97,9 @@ test('should only throw the first error even if multiple would throw', (t) => {
     },
   };
 
-  const ast = treeProto(
-    h('amp-success', {}, [h('amp-fail1'), h('amp-fail2'), h('amp-fail2')])
-  );
+  const nodes = h('amp-success', {}, [h('amp-fail1'), h('amp-fail2')]);
+  const ast = treeProto(nodes);
+  t.throws(() => renderAstNodes([nodes], instructions), {message: /amp-fail1/});
   t.throws(() => renderAstDocument(ast, instructions), {message: /amp-fail1/});
 });
 
@@ -207,9 +207,16 @@ test('should render node partials', (t) => {
     element.appendChild(doc.createTextNode('element text'));
   }
 
-  const inputAst: NodeProto = h('amp-list');
-  let result = renderAstNodes([inputAst], {'amp-list': buildAmpList});
-  t.deepEqual(result, [h('amp-list', {}, ['element text'])]);
+  const inputNode: NodeProto = h('amp-list');
+  const renderedNode: NodeProto = h('amp-list', {}, ['element text']);
+
+  let resultSingle = renderAstNodes([inputNode], {'amp-list': buildAmpList});
+  t.deepEqual(resultSingle, [renderedNode]);
+
+  let resultDouble = renderAstNodes([inputNode, inputNode], {
+    'amp-list': buildAmpList,
+  });
+  t.deepEqual(resultDouble, [renderedNode, renderedNode]);
 });
 
 test('should deeply render node partials', (t) => {
