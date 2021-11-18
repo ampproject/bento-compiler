@@ -58,7 +58,10 @@ function fromTreeProtoHelper(nodes: NodeProto[], doc: Document, parent: Node) {
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
     if (!isElementNode(node)) {
-      parent.appendChild(doc.createTextNode(node.value));
+      // Only create the text node if it has contents.
+      if (node.value) {
+        parent.appendChild(doc.createTextNode(node.value));
+      }
       continue;
     }
 

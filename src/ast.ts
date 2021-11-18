@@ -58,5 +58,5 @@ export function fromNode(node: Node): NodeProto {
 
 const termRegex = /[\w-]+/gm;
 export function getNumTerms(str: string): number {
-  return str.match(termRegex)?.length ?? 0;
+  return str?.match(termRegex)?.length ?? 0;
 }
