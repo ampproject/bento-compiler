@@ -72,7 +72,7 @@ function renderNodeDeep(
     const elements = Array.from(node.querySelectorAll(tagName));
     for (const element of elements) {
       // Do not render anything inside of templates.
-      if (isInTemplate(element)) {
+      if (isInTemplateOrScript(element)) {
         continue;
       }
 
@@ -85,9 +85,12 @@ function renderNodeDeep(
   }
 }
 
-function isInTemplate(node: Node) {
+function isInTemplateOrScript(node: Node) {
   while (node.parentNode) {
-    if (node.parentNode.nodeName === 'TEMPLATE') {
+    if (
+      node.parentNode.nodeName === 'TEMPLATE' ||
+      node.parentNode.nodeName === 'SCRIPT'
+    ) {
       return true;
     }
     node = node.parentNode;

@@ -142,16 +142,19 @@ test('should be unaffected by async modifications', async (t) => {
   t.deepEqual(rendered, ast);
 });
 
-test('should not render elements within templates', (t) => {
+test('should not render elements within templates or scripts', (t) => {
   const instructions = {
     'amp-element': () => {
       throw new Error('Should not be called');
     },
   };
 
-  const ast = treeProto(h('template', {}, [h('amp-element')]));
-  const rendered = renderAstDocument(ast, instructions);
+  let ast = treeProto(h('template', {}, [h('amp-element')]));
+  let rendered = renderAstDocument(ast, instructions);
+  t.deepEqual(rendered, ast);
 
+  ast = treeProto(h('script', {type: 'template'}, [h('amp-element')]));
+  rendered = renderAstDocument(ast, instructions);
   t.deepEqual(rendered, ast);
 });
 
