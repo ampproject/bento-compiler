@@ -70,11 +70,19 @@ function fromTreeProtoHelper(nodes: NodeProto[], doc: Document, parent: Node) {
     }
 
     const domNode = doc.createElement(node.value);
-    for (const {name, value} of node.attributes) {
-      domNode.setAttribute(name, value);
+    if (node.attributes) {
+      for (const {name, value} of node.attributes) {
+        if (typeof value === 'undefined') {
+          domNode.setAttribute(name, '');
+        } else {
+          domNode.setAttribute(name, value);
+        }
+      }
     }
     parent.appendChild(domNode);
 
-    fromTreeProtoHelper(node.children, doc, domNode);
+    if (node.children) {
+      fromTreeProtoHelper(node.children, doc, domNode);
+    }
   }
 }

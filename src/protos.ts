@@ -19,8 +19,8 @@ export interface TextNodeProto {
 export interface ElementNodeProto {
   tagid: number;
   value: string;
-  attributes: Array<AttributeProto>;
-  children: Array<NodeProto>;
+  attributes?: Array<AttributeProto>;
+  children?: Array<NodeProto>;
 }
 
 export interface AttributeProto {
