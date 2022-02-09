@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 import test from 'ava';
-import {DocumentNodeProto, NodeProto, TreeProto} from '../src/protos.js';
+import {
+  DocumentNodeProto,
+  ElementNodeProto,
+  NodeProto,
+  TreeProto,
+} from '../src/protos.js';
 import {getTagId} from '../src/htmltagenum.js';
 import {renderAstDocument, renderAstNodes} from '../src/index.js';
 
@@ -26,20 +31,30 @@ function h(
   attributes: Object = {},
   children: Array<NodeProto | string> = []
 ): NodeProto {
-  return {
+  const nodeProto: NodeProto = {
     tagid: getTagId(tagName),
     value: tagName,
-    attributes: Object.entries(attributes).map(([name, value]) => ({
-      name,
-      value,
-    })),
-    children: children.map((child) => {
+  };
+  if (Object.entries(attributes).length) {
+    nodeProto.attributes = Object.entries(attributes).map(([name, value]) => {
+      if (value === '') {
+        return {name};
+      }
+      return {
+        name,
+        value,
+      };
+    });
+  }
+  if (children.length) {
+    nodeProto.children = children.map((child) => {
       if (typeof child === 'string') {
         return {value: child, num_terms: child.match(/[\w]+/gm)?.length ?? 0};
       }
       return child;
-    }),
-  };
+    });
+  }
+  return nodeProto;
 }
 
 /**
@@ -161,6 +176,28 @@ test('should conserve quirks_mode and root', (t) => {
   t.deepEqual(renderAstDocument(ast, {}), ast);
 
   ast = {root: 7, quirks_mode: false, tree};
+  t.deepEqual(renderAstDocument(ast, {}), ast);
+});
+
+test('should conserve boolean attributes', (t) => {
+  const tree: [DocumentNodeProto] = [
+    {
+      tagid: 92,
+      children: [{tagid: 43, value: 'html', attributes: [{name: 'amp'}]}],
+    },
+  ];
+  const ast: TreeProto = {root: 42, quirks_mode: true, tree};
+  t.deepEqual(renderAstDocument(ast, {}), ast);
+});
+
+test('should conserve lack of children/attrs for efficiency', (t) => {
+  const tree: [DocumentNodeProto] = [
+    {
+      tagid: 92,
+      children: [{tagid: 43, value: 'html'}],
+    },
+  ];
+  const ast: TreeProto = {root: 42, quirks_mode: true, tree};
   t.deepEqual(renderAstDocument(ast, {}), ast);
 });
 

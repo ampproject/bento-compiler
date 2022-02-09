@@ -45,15 +45,25 @@ export function fromNode(node: Node): NodeProto {
   }
 
   const elementNode = node as Element;
-  const attributes = Array.from(elementNode.attributes).map(
-    ({name, value}) => ({name, value})
-  );
-  return {
+  const protoNode: NodeProto = {
     tagid: getTagId(elementNode.tagName),
     value: elementNode.tagName.toLowerCase(),
-    attributes,
-    children: Array.from(node.childNodes).map(fromNode),
   };
+
+  if (elementNode.attributes?.length) {
+    protoNode.attributes = Array.from(elementNode.attributes).map(
+      ({name, value}) => {
+        if (value === '') {
+          return {name};
+        }
+        return {name, value};
+      }
+    );
+  }
+  if (node.childNodes?.length) {
+    protoNode.children = Array.from(node.childNodes).map(fromNode);
+  }
+  return protoNode;
 }
 
 const termRegex = /[\w-]+/gm;
