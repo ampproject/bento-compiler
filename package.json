@@ -1,6 +1,6 @@
 {
   "name": "@ampproject/bento-compiler",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Server-render amp components",
   "author": "The AMP HTML Authors",
   "license": "Apache-2.0",
