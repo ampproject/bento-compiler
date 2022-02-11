@@ -38,7 +38,7 @@
     "typescript": "4.5.5"
   },
   "dependencies": {
-    "@ampproject/worker-dom": "0.32.1"
+    "@ampproject/worker-dom": "0.33.0"
   },
   "np": {
     "branch": "main",
