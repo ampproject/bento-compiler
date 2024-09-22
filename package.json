@@ -28,17 +28,17 @@
   },
   "devDependencies": {
     "@types/parse5": "6.0.3",
-    "ava": "4.0.1",
+    "ava": "4.3.3",
     "benchmark": "2.1.4",
-    "esbuild": "0.14.21",
-    "globby": "13.1.1",
-    "np": "7.6.0",
+    "esbuild": "0.24.0",
+    "globby": "13.2.2",
+    "np": "7.7.0",
     "parse5": "6.0.1",
-    "prettier": "2.5.1",
-    "typescript": "4.5.5"
+    "prettier": "2.8.8",
+    "typescript": "4.9.5"
   },
   "dependencies": {
-    "@ampproject/worker-dom": "0.33.0"
+    "@ampproject/worker-dom": "0.35.0"
   },
   "np": {
     "branch": "main",
